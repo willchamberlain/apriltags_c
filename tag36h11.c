@@ -38,20 +38,31 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 apriltag_family_t *tag36h11_create()
 {
+   int num_codes = 15;
    apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
    tf->name = strdup("tag36h11");
    tf->black_border = 1;                    // size of black border in terms of binary squares
    tf->d = 6;                               // size of tag interior in terms of binary squares: full tag is this plus the border along each edge
    tf->h = 11;                              // Hamming distance
 //   tf->ncodes = 587;
-   tf->ncodes = 5;                          // number of tags in the code family
+   tf->ncodes = 15;                          // number of tags in the code family
 //   tf->codes = calloc(587, sizeof(uint64_t));
-   tf->codes = calloc(5, sizeof(uint64_t)); // NOTE:  takes time to allocate all this each invocation: testing whether reducing the set gives a useful rate of perception
+   tf->codes = calloc(15, sizeof(uint64_t)); // NOTE:  takes time to allocate all this each invocation: testing whether reducing the set gives a useful rate of perception
     tf->codes[0] = 0x0000000d5d628584UL;    // tag  0
-    tf->codes[1] = 0x0000000d97f18b49UL;    // tag  1
-    tf->codes[2] = 0x000000043d40c678UL;    // tag 32
-    tf->codes[3] = 0x00000007742eab1cUL;    // tag 50
-    tf->codes[4] = 0x000000014a34a333UL;    // tag 56
+    tf->codes[1] = 0x0000000d97f18b49UL;     // tag  1
+    tf->codes[2] = 0x0000000dd280910eUL;    // tag 2
+    tf->codes[3] = 0x0000000e479e9c98UL;    // tag 3
+    tf->codes[4] = 0x0000000ebcbca822UL;    // tag 4
+    tf->codes[5] = 0x0000000f31dab3acUL;    // tag 5
+    tf->codes[6] = 0x0000000056a5d085UL;    // tag 6
+    tf->codes[7] = 0x000000010652e1d4UL;    // tag 7
+    tf->codes[8] = 0x000000022b1dfeadUL;    // tag 8
+    tf->codes[9] = 0x0000000265ad0472UL;    // tag 9
+    tf->codes[10] = 0x000000043d40c678UL;    // tag 32
+    tf->codes[11] = 0x00000007742eab1cUL;    // tag 50
+    tf->codes[12] = 0x0000000cf1973594UL;    // tag 55
+    tf->codes[13] = 0x000000014a34a333UL;    // tag 56
+    tf->codes[14] = 0x0000000a8333012fUL;    // tag 88
 //   tf->codes[0] = 0x0000000d5d628584UL;
 //   tf->codes[1] = 0x0000000d97f18b49UL;
 //   tf->codes[2] = 0x0000000dd280910eUL;
