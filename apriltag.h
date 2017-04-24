@@ -237,6 +237,9 @@ struct apriltag_detection
     // apriltag_detection_destroy.
     matd_t *H;
 
+    // The inverse homography; from image pixels to 'ideal' twice-unit origin-centred square tag.
+//    matd_t *H_inv_pix_to_ideal;
+
     // The center of the detection in image pixel coordinates.
     double c[2];
 

@@ -250,34 +250,64 @@ matd_t *homography_compute(zarray_t *correspondences, int flags)
     return H2;
 }
 
+/**
+ assuming that the projection matrix is:
+ [ fx 0  cx 0 ]
+ [  0 fy cy 0 ]
+ [  0  0  1 0 ]
 
-// assuming that the projection matrix is:
-// [ fx 0  cx 0 ]
-// [  0 fy cy 0 ]
-// [  0  0  1 0 ]
-//
-// And that the homography is equal to the projection matrix times the
-// model matrix, recover the model matrix (which is returned). Note
-// that the third column of the model matrix is missing in the
-// expresison below, reflecting the fact that the homography assumes
-// all points are at z=0 (i.e., planar) and that the element of z is
-// thus omitted.  (3x1 instead of 4x1).
-//
-// [ fx 0  cx 0 ] [ R00  R01  TX ]    [ H00 H01 H02 ]
-// [  0 fy cy 0 ] [ R10  R11  TY ] =  [ H10 H11 H12 ]
-// [  0  0  1 0 ] [ R20  R21  TZ ] =  [ H20 H21 H22 ]
-//                [  0    0    1 ]
-//
-// fx*R00 + cx*R20 = H00   (note, H only known up to scale; some additional adjustments required; see code.)
-// fx*R01 + cx*R21 = H01
-// fx*TX  + cx*TZ  = H02
-// fy*R10 + cy*R20 = H10
-// fy*R11 + cy*R21 = H11
-// fy*TY  + cy*TZ  = H12
-// R20 = H20
-// R21 = H21
-// TZ  = H22
+ And that the homography is equal to the projection matrix times the
+ model matrix, recover the model matrix (which is returned). Note
+ that the third column of the model matrix is missing in the
+ expresison below, reflecting the fact that the homography assumes
+ all points are at z=0 (i.e., planar) and that the element of z is
+ thus omitted.  (3x1 instead of 4x1).
 
+ [ fx 0  cx 0 ] [ R00  R01  TX ]    [ H00 H01 H02 ]
+ [  0 fy cy 0 ] [ R10  R11  TY ] =  [ H10 H11 H12 ]
+ [  0  0  1 0 ] [ R20  R21  TZ ] =  [ H20 H21 H22 ]
+                [  0    0    1 ]
+
+ fx*R00 + cx*R20 = H00   (note, H only known up to scale; some additional adjustments required; see code.)
+ fx*R01 + cx*R21 = H01
+ fx*TX  + cx*TZ  = H02
+ fy*R10 + cy*R20 = H10
+ fy*R11 + cy*R21 = H11
+ fy*TY  + cy*TZ  = H12
+ R20 = H20
+ R21 = H21
+ TZ  = H22
+
+* from https://april.eecs.umich.edu/pipermail/apriltag-devel/2016-April/000049.html
+* A note on signs:
+ *
+ * The code below incorporates no additional negative signs, but
+ * respects the sign of any parameters tha tyou pass in. Flipping
+ * the signs allows you to modify the projection to suit a wide
+ * variety of conditions.
+ *
+ * In the "pure geometry" projection matrix, the image appears
+ * upside down; i.e., the x and y coordinates on the left hand
+ * side are the opposite of those on the right of the camera
+ * projection matrix. This would happen for all parameters
+ * positive: recall that points in front of the camera have
+ * negative Z values, which will cause the sign of all points to
+ * flip.
+ *
+ * However, most cameras flip things so that the image appears
+ * "right side up" as though you were looking through the lens
+ * directly. This means that the projected points should have the
+ * same sign as the points on the right of the camera projection
+ * matrix. To achieve this, flip fx and fy.
+ *
+ * One further complication: cameras typically put y=0 at the top
+ * of the image, instead of the bottom. Thus you generally want to
+ * flip y yet again (so it's now positive again).
+ *
+ *
+ * General advice: you probably want fx negative, fy positive, cx
+ * and cy positive, and s=1.
+ **/
 matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, double cy)
 {
     // Note that every variable that we compute is proportional to the scale factor of H.

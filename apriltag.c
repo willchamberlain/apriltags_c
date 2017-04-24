@@ -1159,7 +1159,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             ksz++;
 
         if (ksz > 1) {
-
+            // note:     if (td->quad_sigma != 0)   above
             if (td->quad_sigma > 0) {
                 // Apply a blur
                 image_u8_gaussian_blur(quad_im, sigma, ksz);
